@@ -30,18 +30,21 @@ def findElementsByTagname(root, tagname):
     return elements
 
 
-# 1 Remove Extraneous Resources
-# 1.1 Remove extraneous files and directories (Scored)
+# Backup
 backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/docs')
 backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/examples')
+backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/host-manager')
+backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/manager')
+backupFiles(catalinaHome, catalinaHomeBackup,
+            'conf/Catalina/localhost/manager.xml')
+backupFiles(catalinaHome, catalinaHomeBackup, '/conf/server.xml')
+
+# 1 Remove Extraneous Resources
+# 1.1 Remove extraneous files and directories (Scored)
 rmtree(catalinaHome + 'webapps/docs')
 rmtree(catalinaHome + 'webapps/examples')
 
 if not managerApplicationUtilized:
-    backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/host-manager')
-    backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/manager')
-    backupFiles(catalinaHome, catalinaHomeBackup,
-                'conf/Catalina/localhost/manager.xml')
     rmtree(catalinaHome + 'webapps/host-manager')
     rmtree(catalinaHome + 'webapps/manager')
     rmtree(catalinaHome + 'conf/Catalina/localhost/manager.xml')
@@ -62,13 +65,13 @@ root = tree.getroot()
 connectors = findElementsByTagname(root, 'Connector')
 for connector in connectors:
     connector.set("allowTrace", "false")
-tree.write(catalinaHome + '/conf/server.xml')   
+tree.write(catalinaHome + '/conf/server.xml')
 
 # 3 Protect the Shutdown Port
 # 3.1 Set a nondeterministic Shutdown command value (Scored)
 tree = elementTree.parse(catalinaHome + '/conf/server.xml')
 root = tree.getroot()
-root.set('shutdown', 'WpoLHtGukHEji83KhbSX') # Random String
+root.set('shutdown', 'WpoLHtGukHEji83KhbSX')  # Random String
 tree.write(catalinaHome + '/conf/server.xml')
 
 # 3.2 Disable the Shutdown port (Not Scored)
@@ -102,7 +105,7 @@ realmElement = root.find('Realm')
 realmElement.set("className", "org.apache.catalina.realm.LockOutRealm")
 realmElement.set("failureCount", "3")
 realmElement.set("lockoutTime", "600")
-realmElement.set("cacheSize", "1000") 
+realmElement.set("cacheSize", "1000")
 realmElement.set("cacheRemovalWarningTime", "3600")
 tree.write(catalinaHome + '/conf/server.xml')
 

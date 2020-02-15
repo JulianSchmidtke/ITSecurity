@@ -88,7 +88,7 @@ for subelement in element:
     print ("subelement")
     print (subelement.tag, subelement.attrib)
 
-tree.write('/home/lukas/apache-tomcat-8.5.37/conf/server.xml')
+# tree.write('/home/lukas/apache-tomcat-8.5.37/conf/server.xml')
 
 serverinfo = open ('/home/lukas/apache-tomcat-8.5.37/lib/org/apache/catalina/util/ServerInfo.properties','w+')
 p = Properties()
