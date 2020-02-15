@@ -77,12 +77,12 @@ for child in root:
         print(subchild.tag,subchild.attrib)
         for element in subchild:
             print ("element")
-lockoutrealm = et.SubElement(element, "Realm")
-lockoutrealm.set("className", "org.apache.catalina.realm.LockOutRealm")
-lockoutrealm.set("failureCount", "3")
-lockoutrealm.set("lockoutTime", "600")
-lockoutrealm.set("cacheSize", "1000") 
-lockoutrealm.set("cacheRemovalWarningTime", "3600")
+# lockoutrealm = et.SubElement(element, "Realm")
+# lockoutrealm.set("className", "org.apache.catalina.realm.LockOutRealm")
+# lockoutrealm.set("failureCount", "3")
+# lockoutrealm.set("lockoutTime", "600")
+# lockoutrealm.set("cacheSize", "1000") 
+# lockoutrealm.set("cacheRemovalWarningTime", "3600")
 
 for subelement in element:
     print ("subelement")

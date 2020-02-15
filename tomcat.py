@@ -62,17 +62,20 @@ root = tree.getroot()
 connectors = findElementsByTagname(root, 'Connector')
 for connector in connectors:
     connector.set("allowTrace", "false")
+tree.write(catalinaHome + '/conf/server.xml')   
 
 # 3 Protect the Shutdown Port
 # 3.1 Set a nondeterministic Shutdown command value (Scored)
 tree = elementTree.parse(catalinaHome + '/conf/server.xml')
 root = tree.getroot()
 root.set('shutdown', 'WpoLHtGukHEji83KhbSX') # Random String
+tree.write(catalinaHome + '/conf/server.xml')
 
 # 3.2 Disable the Shutdown port (Not Scored)
 tree = elementTree.parse(catalinaHome + '/conf/server.xml')
 root = tree.getroot()
 root.set('port', '-1')
+tree.write(catalinaHome + '/conf/server.xml')
 
 # 4 Protect Tomcat Configurations
 # 4.1 Restrict access to $CATALINA_HOME (Scored)
@@ -101,6 +104,7 @@ realmElement.set("failureCount", "3")
 realmElement.set("lockoutTime", "600")
 realmElement.set("cacheSize", "1000") 
 realmElement.set("cacheRemovalWarningTime", "3600")
+tree.write(catalinaHome + '/conf/server.xml')
 
 # 6 Connector Security
 # 6.1 Setup Client-cert Authentication (Scored)
