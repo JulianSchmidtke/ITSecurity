@@ -68,16 +68,16 @@ for connector in connectors:
 tree.write(catalinaHome + '/conf/server.xml')
 
 # 3 Protect the Shutdown Port
-# 3.1 Set a nondeterministic Shutdown command value (Scored)
 tree = elementTree.parse(catalinaHome + '/conf/server.xml')
 root = tree.getroot()
+
+# 3.1 Set a nondeterministic Shutdown command value (Scored)
 root.set('shutdown', 'WpoLHtGukHEji83KhbSX')  # Random String
-tree.write(catalinaHome + '/conf/server.xml')
 
 # 3.2 Disable the Shutdown port (Not Scored)
-tree = elementTree.parse(catalinaHome + '/conf/server.xml')
-root = tree.getroot()
 root.set('port', '-1')
+
+# Save Changes
 tree.write(catalinaHome + '/conf/server.xml')
 
 # 4 Protect Tomcat Configurations
