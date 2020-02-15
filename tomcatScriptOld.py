@@ -31,7 +31,7 @@ with open('/home/lukas/apache-tomcat-8.5.37/bin/catalina-test.sh', 'w+') as outf
 
 tree = et.parse('/home/lukas/apache-tomcat-8.5.37/conf/server.xml')
 root = tree.getroot()
-root.set("shutdown","herunterfahren")
+# root.set("shutdown","herunterfahren")
 
 print (root.tag, root.attrib)
 errorseite = et.SubElement(root, "error-page")
@@ -45,17 +45,17 @@ securitylistener.set("className", "org.apache.catalina.security.SecurityListener
 securitylistener.set("checkedOSUsers", "")
 securitylistener.set("minimumUmask", "007")
 
-def find_elements_by_tagname(root, tagname):
-    elements = []
-    if not root:
-        return []
+# def find_elements_by_tagname(root, tagname):
+#     elements = []
+#     if not root:
+#         return []
 
-    for child in root:
-        elements.extend(find_elements_by_tagname(child, tagname))
-    new_elements = root.findall(tagname)
+#     for child in root:
+#         elements.extend(find_elements_by_tagname(child, tagname))
+#     new_elements = root.findall(tagname)
 
-    elements.extend(new_elements)
-    return elements
+#     elements.extend(new_elements)
+#     return elements
 
 connectors = find_elements_by_tagname(root, 'Connector')
 connectors[0].set("connectionTimeout", "60000")

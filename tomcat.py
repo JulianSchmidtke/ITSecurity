@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from shutil import copyfile, rmtree
+import xml.etree.ElementTree as elementTree
 
 # Global Variables
 # Path to the apache root directory
@@ -14,6 +15,19 @@ managerApplicationUtilized = False
 def backupFiles(sourceRoot, targetRoot, path):
     copyfile(sourceRoot + path,
              targetRoot + path)
+
+
+def findElementsByTagname(root, tagname):
+    elements = []
+    if not root:
+        return []
+
+    for child in root:
+        elements.extend(findElementsByTagname(child, tagname))
+    new_elements = root.findall(tagname)
+
+    elements.extend(new_elements)
+    return elements
 
 
 # 1 Remove Extraneous Resources
@@ -42,10 +56,23 @@ if not managerApplicationUtilized:
 # Connectors (Scored)
 # 2.5 Disable client facing Stack Traces (Scored)
 # 2.6 Turn off TRACE (Scored)
+# TODO: Was hat hier web.xml zu suchen?
+tree = elementTree.parse(catalinaHome + '/conf/server.xml')
+root = tree.getroot()
+connectors = findElementsByTagname(root, 'Connector')
+for connector in connectors:
+    connector.set("allowTrace", "false")
 
 # 3 Protect the Shutdown Port
 # 3.1 Set a nondeterministic Shutdown command value (Scored)
+tree = elementTree.parse(catalinaHome + '/conf/server.xml')
+root = tree.getroot()
+root.set('shutdown', 'WpoLHtGukHEji83KhbSX') # Random String
+
 # 3.2 Disable the Shutdown port (Not Scored)
+tree = elementTree.parse(catalinaHome + '/conf/server.xml')
+root = tree.getroot()
+root.set('port', '-1')
 
 # 4 Protect Tomcat Configurations
 # 4.1 Restrict access to $CATALINA_HOME (Scored)
