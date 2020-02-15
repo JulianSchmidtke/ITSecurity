@@ -189,10 +189,10 @@ for path in restrictions:
     mod = restrictions[path]
     os.chmod(path, mod)
 
-shutil.rmtree('/home/lukas/apache-tomcat-8.5.37/webapps/docs')
-shutil.rmtree('/home/lukas/apache-tomcat-8.5.37/webapps/examples')
+# shutil.rmtree('/home/lukas/apache-tomcat-8.5.37/webapps/docs')
+# shutil.rmtree('/home/lukas/apache-tomcat-8.5.37/webapps/examples')
 
 os.rename('/home/lukas/apache-tomcat-8.5.37/conf/logging.properties', 'home/lukas/apache-tomcat-8.5.37/webapps/examples/WEB-INF/classes/logging.properties') 
 
-os.rename('/home/lukas/apache-tomcat-8.5.37/webapps/host-manager/manager.xml', '/home/lukas/apache-tomcat-8.5.37/webapps/host-manager/neuername.xml')
-os.rename('/home/lukas/apache-tomcat-8.5.37/webapps/manager', '/home/lukas/apache-tomcat-8.5.37/webapps/nochmalanders')
+# os.rename('/home/lukas/apache-tomcat-8.5.37/webapps/host-manager/manager.xml', '/home/lukas/apache-tomcat-8.5.37/webapps/host-manager/neuername.xml')
+# os.rename('/home/lukas/apache-tomcat-8.5.37/webapps/manager', '/home/lukas/apache-tomcat-8.5.37/webapps/nochmalanders')
