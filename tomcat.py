@@ -93,6 +93,14 @@ root.set('port', '-1')
 # 5 Configure Realms
 # 5.1 Use secure Realms (Scored)
 # 5.2 Use LockOut Realms (Scored)
+tree = elementTree.parse(catalinaHome + '/conf/server.xml')
+root = tree.getroot()
+realmElement = root.find('Realm')
+realmElement.set("className", "org.apache.catalina.realm.LockOutRealm")
+realmElement.set("failureCount", "3")
+realmElement.set("lockoutTime", "600")
+realmElement.set("cacheSize", "1000") 
+realmElement.set("cacheRemovalWarningTime", "3600")
 
 # 6 Connector Security
 # 6.1 Setup Client-cert Authentication (Scored)
