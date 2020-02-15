@@ -73,7 +73,9 @@ serverInfoProperties['server.built'] = ''
 
 # save serverinfo
 serverInfoProperties.write(catalinaHome + '/lib/org/apache/catalina/util/ServerInfo.properties')
+
 # TODO: Save and Zip Jar
+
 
 # 2.4 Disable X-Powered-By HTTP Header and Rename the Server Value for all
 # Connectors (Scored)
