@@ -115,7 +115,13 @@ tree.write(catalinaHome + '/conf/server.xml')
 # 6.3 Ensure scheme is set accurately (Scored)
 # 6.4 Ensure secure is set to true only for SSL-enabled Connectors (Scored)
 # 6.5 Ensure SSL Protocol is set to TLS for Secure Connectors (Scored)
-
+tree = elementTree.parse(catalinaHome + '/conf/server.xml')
+root = tree.getroot()
+connectors = findElementsByTagname(root, 'Connector')
+for connector in connectors:
+    if connector.get('SSLEnabled') == True:
+         connector.set("sslProtocol", "TLS")
+tree.write(catalinaHome + '/conf/server.xml')
 # 7 Establish and Protect Logging Facilities
 # 7.1 Application specific logging (Scored)
 # 7.2 Specify file handler in logging.properties files (Scored)
