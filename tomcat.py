@@ -2,6 +2,8 @@
 
 from shutil import copyfile, rmtree
 import xml.etree.ElementTree as elementTree
+import os
+import configparser
 
 # Global Variables
 # Path to the apache root directory
@@ -37,7 +39,8 @@ backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/host-manager')
 backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/manager')
 backupFiles(catalinaHome, catalinaHomeBackup,
             'conf/Catalina/localhost/manager.xml')
-backupFiles(catalinaHome, catalinaHomeBackup, '/conf/server.xml')
+backupFiles(catalinaHome, catalinaHomeBackup, 'conf/server.xml')
+backupFiles(catalinaHome, catalinaHomeBackup, 'lib/')
 
 # 1 Remove Extraneous Resources
 # 1.1 Remove extraneous files and directories (Scored)
@@ -52,35 +55,70 @@ if not managerApplicationUtilized:
 # 1.2  Disable Unused Connectors (Not Scored)
 
 # 2 Limit Server Platform Information Leaks
+# Open and Unzip Jar
+# TODO: Extract JAR
+os.chdir(catalinaHome + '\lib')
+
+# Open serverinfo
+serverInfoProperties = configparser.RawConfigParser()
+serverInfoProperties.read(catalinaHome + '/lib/org/apache/catalina/util/ServerInfo.properties','w+')
+
+# TODO: Passen die Werte?
 # 2.1 Alter the Advertised server.info String (Scored)
+serverInfoProperties['server.info'] = ''
 # 2.2 Alter the Advertised server.number String (Scored)
+serverInfoProperties['server.number'] = ''
 # 2.3 Alter the Advertised server.built Date (Scored)
+serverInfoProperties['server.built'] = ''
+
+# save serverinfo
+serverInfoProperties.write(catalinaHome + '/lib/org/apache/catalina/util/ServerInfo.properties')
+# TODO: Save and Zip Jar
+
 # 2.4 Disable X-Powered-By HTTP Header and Rename the Server Value for all
 # Connectors (Scored)
+# Get server.xml
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+# Change connectors
+connectors = findElementsByTagname(serverRoot, 'Connector')
+for connector in connectors:
+    connector.set("xpoweredBy", "false")
+    connector.set("server", "NotABlankString")
+# Save server.xml
+serverTree.write(catalinaHome + '/conf/server.xml')
+
 # 2.5 Disable client facing Stack Traces (Scored)
+# TODO:
+
 # 2.6 Turn off TRACE (Scored)
-# TODO: Was hat hier web.xml zu suchen?
-tree = elementTree.parse(catalinaHome + '/conf/server.xml')
-root = tree.getroot()
-connectors = findElementsByTagname(root, 'Connector')
+# Get server.xml
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+# Change connectors
+connectors = findElementsByTagname(serverRoot, 'Connector')
 for connector in connectors:
     connector.set("allowTrace", "false")
-tree.write(catalinaHome + '/conf/server.xml')
+# Save server.xml
+serverTree.write(catalinaHome + '/conf/server.xml')
+
 
 # 3 Protect the Shutdown Port
-tree = elementTree.parse(catalinaHome + '/conf/server.xml')
-root = tree.getroot()
+# Get server.xml
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
 
 # 3.1 Set a nondeterministic Shutdown command value (Scored)
-root.set('shutdown', 'WpoLHtGukHEji83KhbSX')  # Random String
+serverRoot.set('shutdown', 'WpoLHtGukHEji83KhbSX')  # Random String
 
 # 3.2 Disable the Shutdown port (Not Scored)
-root.set('port', '-1')
+serverRoot.set('port', '-1')
 
-# Save Changes
-tree.write(catalinaHome + '/conf/server.xml')
+# Save server.xml
+serverTree.write(catalinaHome + '/conf/server.xml')
 
 # 4 Protect Tomcat Configurations
+# TODO:
 # 4.1 Restrict access to $CATALINA_HOME (Scored)
 # 4.2 Restrict access to $CATALINA_BASE (Scored)
 # 4.3 Restrict access to Tomcat configuration directory (Scored)
@@ -98,30 +136,33 @@ tree.write(catalinaHome + '/conf/server.xml')
 
 # 5 Configure Realms
 # 5.1 Use secure Realms (Scored)
+# TODO:
 # 5.2 Use LockOut Realms (Scored)
-tree = elementTree.parse(catalinaHome + '/conf/server.xml')
-root = tree.getroot()
-realmElement = root.find('Realm')
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+realmElement = serverRoot.find('Realm')
 realmElement.set("className", "org.apache.catalina.realm.LockOutRealm")
 realmElement.set("failureCount", "3")
 realmElement.set("lockoutTime", "600")
 realmElement.set("cacheSize", "1000")
 realmElement.set("cacheRemovalWarningTime", "3600")
-tree.write(catalinaHome + '/conf/server.xml')
+serverTree.write(catalinaHome + '/conf/server.xml')
 
 # 6 Connector Security
+# TODO:
 # 6.1 Setup Client-cert Authentication (Scored)
 # 6.2 Ensure SSLEnabled is set to True for Sensitive Connectors (Not Scored)
 # 6.3 Ensure scheme is set accurately (Scored)
 # 6.4 Ensure secure is set to true only for SSL-enabled Connectors (Scored)
 # 6.5 Ensure SSL Protocol is set to TLS for Secure Connectors (Scored)
-tree = elementTree.parse(catalinaHome + '/conf/server.xml')
-root = tree.getroot()
-connectors = findElementsByTagname(root, 'Connector')
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+connectors = findElementsByTagname(serverRoot, 'Connector')
 for connector in connectors:
     if connector.get('SSLEnabled') == True:
-         connector.set("sslProtocol", "TLS")
-tree.write(catalinaHome + '/conf/server.xml')
+        connector.set("sslProtocol", "TLS")
+serverTree.write(catalinaHome + '/conf/server.xml')
+
 # 7 Establish and Protect Logging Facilities
 # 7.1 Application specific logging (Scored)
 # 7.2 Specify file handler in logging.properties files (Scored)
