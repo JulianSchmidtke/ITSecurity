@@ -29,8 +29,8 @@ catalina_sh_lines[position:position] = new_lines
 with open('/home/lukas/apache-tomcat-8.5.37/bin/catalina-test.sh', 'w+') as outf:
     outf.write('\n'.join(catalina_sh_lines))
 
-tree = et.parse('/home/lukas/apache-tomcat-8.5.37/conf/server.xml')
-root = tree.getroot()
+# tree = et.parse('/home/lukas/apache-tomcat-8.5.37/conf/server.xml')
+# root = tree.getroot()
 # root.set("shutdown","herunterfahren")
 
 print (root.tag, root.attrib)
@@ -60,10 +60,10 @@ securitylistener.set("minimumUmask", "007")
 connectors = find_elements_by_tagname(root, 'Connector')
 connectors[0].set("connectionTimeout", "60000")
 connectors[0].set("scheme", "http")
-connectors[0].set("allowTrace", "false")
-connectors[1].set("allowTrace", "false")
-connectors[0].set("xpoweredBy", "false")
-connectors[1].set("xpoweredBy", "false")
+# connectors[0].set("allowTrace", "false")
+# connectors[1].set("allowTrace", "false")
+# connectors[0].set("xpoweredBy", "false")
+# connectors[1].set("xpoweredBy", "false")
 connectors[0].set("adress", "0.0.0.0")
 
 hosts = find_elements_by_tagname(root, 'Host')
@@ -88,15 +88,15 @@ for subelement in element:
     print ("subelement")
     print (subelement.tag, subelement.attrib)
 
-tree.write('/home/lukas/apache-tomcat-8.5.37/conf/server.xml')
+# tree.write('/home/lukas/apache-tomcat-8.5.37/conf/server.xml')
 
-serverinfo = open ('/home/lukas/apache-tomcat-8.5.37/lib/org/apache/catalina/util/ServerInfo.properties','w+')
-p = Properties()
-p.load(source_data=serverinfo.read())
-p['server.info'] = 'Apache Tomcat'
-p['server.number'] = 'Servernummer'
-p['server.built'] = 'Servererstellt'
-serverinfo.write('/home/lukas/apache-tomcat-8.5.37/lib/org/apache/catalina/util/ServerInfo.properties')
+# serverinfo = open ('/home/lukas/apache-tomcat-8.5.37/lib/org/apache/catalina/util/ServerInfo.properties','w+')
+# p = Properties()
+# p.load(source_data=serverinfo.read())
+# p['server.info'] = 'Apache Tomcat'
+# p['server.number'] = 'Servernummer'
+# p['server.built'] = 'Servererstellt'
+# serverinfo.write('/home/lukas/apache-tomcat-8.5.37/lib/org/apache/catalina/util/ServerInfo.properties')
 
 logging = open ('/home/lukas/apache-tomcat-8.5.37/conf/logging.properties','w+')
 l = Properties()
