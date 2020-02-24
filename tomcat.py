@@ -1,13 +1,15 @@
 #!/usr/bin/python3
 
-from shutil import copyfile, rmtree
+from shutil import copyfile, copytree, rmtree
+from zipfile import ZipFile
+from pyjavaproperties import Properties
 import xml.etree.ElementTree as elementTree
 import os
 import configparser
 
 # Global Variables
 # Path to the apache root directory
-catalinaHome = ""  # /home/lukas/apache-tomcat-8.5.37/
+catalinaHome = "C:/Users/Julian/Desktop/apache-tomcat-8.5.51/"
 catalinaHomeBackup = catalinaHome + "backup/"
 managerApplicationUtilized = False
 # Username of the Tomcat admin
@@ -18,9 +20,16 @@ tomcatGroup = "tomcat"
 # Global Functions
 
 
-def backupFiles(sourceRoot, targetRoot, path):
-    copyfile(sourceRoot + path,
-             targetRoot + path)
+def backupFile(sourceRoot, targetRoot, path):
+    if os.path.exists(sourceRoot + path) and not os.path.exists(targetRoot + path):
+        copyfile(sourceRoot + path,
+                 targetRoot + path)
+
+
+def backupFolder(sourceRoot, targetRoot, path):
+    if os.path.exists(sourceRoot + path) and not os.path.exists(targetRoot + path):
+        copytree(sourceRoot + path,
+                 targetRoot + path)
 
 
 def findElementsByTagname(root, tagname):
@@ -37,37 +46,38 @@ def findElementsByTagname(root, tagname):
 
 
 # Backup
-backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/docs')
-backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/examples')
-backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/host-manager')
-backupFiles(catalinaHome, catalinaHomeBackup, 'webapps/manager')
-backupFiles(catalinaHome, catalinaHomeBackup,
-            'conf/Catalina/localhost/manager.xml')
-backupFiles(catalinaHome, catalinaHomeBackup, 'conf/server.xml')
-backupFiles(catalinaHome, catalinaHomeBackup, 'lib/')
+backupFolder(catalinaHome, catalinaHomeBackup, 'webapps/docs/')
+backupFolder(catalinaHome, catalinaHomeBackup, 'conf/')
+backupFolder(catalinaHome, catalinaHomeBackup, 'lib/')
 
 # 1 Remove Extraneous Resources
 # 1.1 Remove extraneous files and directories (Scored)
-rmtree(catalinaHome + 'webapps/docs')
-rmtree(catalinaHome + 'webapps/examples')
+if os.path.exists(catalinaHome + 'webapps/docs/'):
+    rmtree(catalinaHome + 'webapps/docs/')
+if os.path.exists(catalinaHome + 'webapps/examples/'):
+    rmtree(catalinaHome + 'webapps/examples/')
 
 if not managerApplicationUtilized:
-    rmtree(catalinaHome + 'webapps/host-manager')
-    rmtree(catalinaHome + 'webapps/manager')
-    rmtree(catalinaHome + 'conf/Catalina/localhost/manager.xml')
+    if os.path.exists(catalinaHome + 'webapps/host-manager/'):
+        rmtree(catalinaHome + 'webapps/host-manager/')
+    if os.path.exists(catalinaHome + 'webapps/manager/'):
+        rmtree(catalinaHome + 'webapps/manager/')
+    if os.path.exists(catalinaHome + 'conf/Catalina/localhost/manager.xml'):
+        rmtree(catalinaHome + 'conf/Catalina/localhost/manager.xml')
 
 # 1.2  Disable Unused Connectors (Not Scored)
 
 # 2 Limit Server Platform Information Leaks
 # Open and Unzip Jar
-# TODO: Extract JAR
-os.chdir(catalinaHome + '\lib')
+os.chdir(catalinaHome + 'lib/')
+with ZipFile('catalina.jar', 'r') as zipObj:
+    zipObj.extractall()
 
 # Open serverinfo
-serverInfoProperties = configparser.RawConfigParser()
-serverInfoProperties.read(catalinaHome + '/lib/org/apache/catalina/util/ServerInfo.properties','w+')
+serverInfoProperties = Properties()
+serverInfoProperties.load(open(
+    catalinaHome + 'lib/org/apache/catalina/util/ServerInfo.properties'))
 
-# TODO: Passen die Werte?
 # 2.1 Alter the Advertised server.info String (Scored)
 serverInfoProperties['server.info'] = ''
 # 2.2 Alter the Advertised server.number String (Scored)
@@ -76,7 +86,8 @@ serverInfoProperties['server.number'] = ''
 serverInfoProperties['server.built'] = ''
 
 # save serverinfo
-serverInfoProperties.write(catalinaHome + '/lib/org/apache/catalina/util/ServerInfo.properties')
+serverInfoProperties.store(open(
+    catalinaHome + 'lib/org/apache/catalina/util/ServerInfo.properties', 'w'))
 
 # TODO: Save and Zip Jar
 
@@ -125,11 +136,11 @@ serverTree.write(catalinaHome + '/conf/server.xml')
 
 # 4 Protect Tomcat Configurations
 # Group no Write, World no Permission at all
-groupRemoveWriteWorldRemoveAll = 0o750 # g-w, o-rwx
-worldRemoveAll = 0o770 # o-rwx
+groupRemoveWriteWorldRemoveAll = 0o750  # g-w, o-rwx
+worldRemoveAll = 0o770  # o-rwx
 
 # 4.1 Restrict access to $CATALINA_HOME (Scored)
-os.chown(catalinaHome, tomcatAdmin, tomcatGroup)
+# os.chown(catalinaHome, tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome, groupRemoveWriteWorldRemoveAll)
 # chmod g-w,o-rwx $CATALINA_HOME
 
@@ -137,50 +148,53 @@ os.chmod(catalinaHome, groupRemoveWriteWorldRemoveAll)
 # Not used
 
 # 4.3 Restrict access to Tomcat configuration directory (Scored)
-os.chown(catalinaHome + '/conf', tomcatAdmin, tomcatGroup)
-os.chmod(catalinaHome + '/conf', groupRemoveWriteWorldRemoveAll)
+# os.chown(catalinaHome + '/conf/', tomcatAdmin, tomcatGroup)
+os.chmod(catalinaHome + '/conf/', groupRemoveWriteWorldRemoveAll)
 
 # 4.4 Restrict access to Tomcat logs directory (Scored)
-os.chown(catalinaHome + '/logs', tomcatAdmin, tomcatGroup)
-os.chmod(catalinaHome + '/logs', worldRemoveAll)
+# os.chown(catalinaHome + '/logs/', tomcatAdmin, tomcatGroup)
+os.chmod(catalinaHome + '/logs/', worldRemoveAll)
 
 # 4.5 Restrict access to Tomcat temp directory (Scored)
-os.chown(catalinaHome + '/temp', tomcatAdmin, tomcatGroup)
-os.chmod(catalinaHome + '/temp', worldRemoveAll)
+# os.chown(catalinaHome + '/temp/', tomcatAdmin, tomcatGroup)
+os.chmod(catalinaHome + '/temp/', worldRemoveAll)
 
 # 4.6 Restrict access to Tomcat binaries directory (Scored)
-os.chown(catalinaHome + '/bin', tomcatAdmin, tomcatGroup)
-os.chmod(catalinaHome + '/bin', worldRemoveAll)
+# os.chown(catalinaHome + '/bin/', tomcatAdmin, tomcatGroup)
+os.chmod(catalinaHome + '/bin/', worldRemoveAll)
 
 # 4.7 Restrict access to Tomcat web application directory (Scored)
-os.chown(catalinaHome + '/webapps', tomcatAdmin, tomcatGroup)
-os.chmod(catalinaHome + '/webapps', worldRemoveAll)
+# os.chown(catalinaHome + '/webapps/', tomcatAdmin, tomcatGroup)
+os.chmod(catalinaHome + '/webapps/', worldRemoveAll)
 
 # 4.8 Restrict access to Tomcat catalina.policy (Scored)
-os.chown(catalinaHome + '/conf/catalina.policy', tomcatAdmin, tomcatGroup)
+# os.chown(catalinaHome + '/conf/catalina.policy', tomcatAdmin, tomcatGroup)
 
 # 4.9 Restrict access to Tomcat catalina.properties (Scored)
-os.chown(catalinaHome + '/conf/catalina.properties', tomcatAdmin, tomcatGroup)
-os.chmod(catalinaHome + '/conf/catalina.properties', groupRemoveWriteWorldRemoveAll)
+# os.chown(catalinaHome + '/conf/catalina.properties', tomcatAdmin, tomcatGroup)
+os.chmod(catalinaHome + '/conf/catalina.properties',
+         groupRemoveWriteWorldRemoveAll)
 
 # 4.10 Restrict access to Tomcat context.xml (Scored)
-os.chown(catalinaHome + '/conf/context.xml', tomcatAdmin, tomcatGroup)
+# os.chown(catalinaHome + '/conf/context.xml', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/conf/context.xml', groupRemoveWriteWorldRemoveAll)
 
 # 4.11 Restrict access to Tomcat logging.properties (Scored)
-os.chown(catalinaHome + '/conf/logging.properties', tomcatAdmin, tomcatGroup)
-os.chmod(catalinaHome + '/conf/logging.properties', groupRemoveWriteWorldRemoveAll)
+# os.chown(catalinaHome + '/conf/logging.properties', tomcatAdmin, tomcatGroup)
+os.chmod(catalinaHome + '/conf/logging.properties',
+         groupRemoveWriteWorldRemoveAll)
 
 # 4.12 Restrict access to Tomcat server.xml (Scored)
-os.chown(catalinaHome + '/conf/server.xml', tomcatAdmin, tomcatGroup)
+# os.chown(catalinaHome + '/conf/server.xml', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/conf/server.xml', groupRemoveWriteWorldRemoveAll)
 
 # 4.13 Restrict access to Tomcat tomcat-users.xml (Scored)
-os.chown(catalinaHome + '/conf/tomcat-users.xml', tomcatAdmin, tomcatGroup)
-os.chmod(catalinaHome + '/conf/tomcat-users.xml', groupRemoveWriteWorldRemoveAll)
+# os.chown(catalinaHome + '/conf/tomcat-users.xml', tomcatAdmin, tomcatGroup)
+os.chmod(catalinaHome + '/conf/tomcat-users.xml',
+         groupRemoveWriteWorldRemoveAll)
 
 # 4.14 Restrict access to Tomcat web.xml (Scored)
-os.chown(catalinaHome + '/conf/web.xml', tomcatAdmin, tomcatGroup)
+# os.chown(catalinaHome + '/conf/web.xml', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/conf/web.xml', groupRemoveWriteWorldRemoveAll)
 
 # 5 Configure Realms

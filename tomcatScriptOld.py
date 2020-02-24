@@ -168,26 +168,26 @@ for child in reet2:
 baum2.write('/home/lukas/apache-tomcat-8.5.37/webapps/host-manager/META-INF/context.xml')
 
 
-gruppe = 0o750 #g-w und o-rwx
-andere = 0o770 #o-rwx
-restrictions = {
-    '/home/lukas/apache-tomcat-8.5.37' : gruppe,
-    '/home/lukas/apache-tomcat-8.5.37/conf' : gruppe,
-    '/home/lukas/apache-tomcat-8.5.37/logs' : andere,
-    '/home/lukas/apache-tomcat-8.5.37/temp' : andere,
-    '/home/lukas/apache-tomcat-8.5.37/bin' : gruppe,
-    '/home/lukas/apache-tomcat-8.5.37/webapps' : gruppe,
-    '/home/lukas/apache-tomcat-8.5.37/conf/catalina.policy' : andere,
-    '/home/lukas/apache-tomcat-8.5.37/conf/catalina.properties' : gruppe,
-    '/home/lukas/apache-tomcat-8.5.37/conf/context.xml' : gruppe,
-    '/home/lukas/apache-tomcat-8.5.37/conf/logging.properties' : gruppe,
-    '/home/lukas/apache-tomcat-8.5.37/conf/server.xml' : gruppe,
-    '/home/lukas/apache-tomcat-8.5.37/conf/tomcat-users.xml' : gruppe,
-    '/home/lukas/apache-tomcat-8.5.37/conf/web.xml' : gruppe,
-}
-for path in restrictions:
-    mod = restrictions[path]
-    os.chmod(path, mod)
+# gruppe = 0o750 #g-w und o-rwx
+# andere = 0o770 #o-rwx
+# restrictions = {
+#     '/home/lukas/apache-tomcat-8.5.37' : gruppe,
+#     '/home/lukas/apache-tomcat-8.5.37/conf' : gruppe,
+#     '/home/lukas/apache-tomcat-8.5.37/logs' : andere,
+#     '/home/lukas/apache-tomcat-8.5.37/temp' : andere,
+#     '/home/lukas/apache-tomcat-8.5.37/bin' : gruppe,
+#     '/home/lukas/apache-tomcat-8.5.37/webapps' : gruppe,
+#     '/home/lukas/apache-tomcat-8.5.37/conf/catalina.policy' : andere,
+#     '/home/lukas/apache-tomcat-8.5.37/conf/catalina.properties' : gruppe,
+#     '/home/lukas/apache-tomcat-8.5.37/conf/context.xml' : gruppe,
+#     '/home/lukas/apache-tomcat-8.5.37/conf/logging.properties' : gruppe,
+#     '/home/lukas/apache-tomcat-8.5.37/conf/server.xml' : gruppe,
+#     '/home/lukas/apache-tomcat-8.5.37/conf/tomcat-users.xml' : gruppe,
+#     '/home/lukas/apache-tomcat-8.5.37/conf/web.xml' : gruppe,
+# }
+# for path in restrictions:
+#     mod = restrictions[path]
+#     os.chmod(path, mod)
 
 # shutil.rmtree('/home/lukas/apache-tomcat-8.5.37/webapps/docs')
 # shutil.rmtree('/home/lukas/apache-tomcat-8.5.37/webapps/examples')
