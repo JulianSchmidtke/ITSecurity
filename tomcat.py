@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
-from shutil import copyfile, rmtree
+from shutil import copy2, copyfile, rmtree
 import xml.etree.ElementTree as elementTree
+import os
 
 # Global Variables
 # Path to the apache root directory
@@ -115,6 +116,17 @@ tree.write(catalinaHome + '/conf/server.xml')
 
 # 7 Establish and Protect Logging Facilities
 # 7.1 Application specific logging (Scored)
+sourceLoggingPorperties = catalinaHome + '/conf/logging.properties'
+webAppsDir = catalinaHome + '/webapps/'
+
+dirs = os.listdir(webAppsDir)
+
+for dir in dirs:
+    dstLoggingPropertiesDir = webAppsDir + dir + '/WEB-INF/classes'
+    if os.path.exists(dstLoggingPropertiesDir):
+        dstLoggingPropertiesDir = dstLoggingPropertiesDir + '/logging.properties'
+        copy2(sourceLoggingPorperties, dstLoggingPropertiesDir)
+
 # 7.2 Specify file handler in logging.properties files (Scored)
 # 7.3 Ensure className is set correctly in context.xml (Scored)
 # 7.4 Ensure directory in context.xml is a secure location (Scored)
