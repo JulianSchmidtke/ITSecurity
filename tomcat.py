@@ -203,12 +203,17 @@ os.chmod(catalinaHome + '/conf/web.xml', groupRemoveWriteWorldRemoveAll)
 # 5.2 Use LockOut Realms (Scored)
 serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
 serverRoot = serverTree.getroot()
-realmElement = serverRoot.find('Realm')
-realmElement.set("className", "org.apache.catalina.realm.LockOutRealm")
-realmElement.set("failureCount", "3")
-realmElement.set("lockoutTime", "600")
-realmElement.set("cacheSize", "1000")
-realmElement.set("cacheRemovalWarningTime", "3600")
+serviceElements = serverRoot.findall('Service')
+for serviceElement in serviceElements:
+    engineElements = serviceElement.findall('Engine')
+    for engineElement in engineElements:
+        realmElement = engineElement.find('Realm')
+        realmElement.set("className", "org.apache.catalina.realm.LockOutRealm")
+        realmElement.set("failureCount", "3")
+        realmElement.set("lockoutTime", "600")
+        realmElement.set("cacheSize", "1000")
+        realmElement.set("cacheRemovalWarningTime", "3600")
+
 serverTree.write(catalinaHome + '/conf/server.xml')
 
 # 6 Connector Security
@@ -222,8 +227,9 @@ serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
 serverRoot = serverTree.getroot()
 connectors = findElementsByTagname(serverRoot, 'Connector')
 for connector in connectors:
+    
     if connector.get('SSLEnabled') == True:
-        connector.set("sslProtocol", "TLS")
+        connector.set("sslProtocol", "TLS") 
 serverTree.write(catalinaHome + '/conf/server.xml')
 
 # 7 Establish and Protect Logging Facilities
