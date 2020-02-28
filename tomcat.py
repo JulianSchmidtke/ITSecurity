@@ -229,7 +229,7 @@ serverRoot = serverTree.getroot()
 connectors = findElementsByTagname(serverRoot, 'Connector')
 for connector in connectors:
     
-    if connector.get('SSLEnabled') == True:
+    if connector.get('SSLEnabled') == "True":
         connector.set("sslProtocol", "TLS") 
 serverTree.write(catalinaHome + '/conf/server.xml')
 
@@ -265,7 +265,8 @@ for dir in dirs:
         connectors = findElementsByTagname(serverRoot, 'Valve')
         for connector in connectors:
             if connector.get("className") == "org.apache.catalina.valves.RemoteAddrValve":
-                connector.set("className", "org.apache.catalina.valves.AccessLogValve")
+                connector.set(
+                    "className", "org.apache.catalina.valves.AccessLogValve")
         realmElement = serverRoot.find("Valve")
         realmElement.set("directory", "$CATALINA_HOME/logs/")
         realmElement.set("prefix", "access_log")
@@ -305,5 +306,27 @@ for dir in dirs:
 # 10.15 Do not allow cross context requests (Scored)
 # 10.16 Do not resolve hosts on logging valves (Scored)
 # 10.17 Enable memory leak listener (Scored)
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+leakPreventionListener = elementTree.SubElement(serverRoot, 'Listener')
+leakPreventionListener.set("className", "org.apache.catalina.core.JreMemoryLeakPreventionListener")
+serverTree.write(catalinaHome + '/conf/server.xml')
 # 10.18 Setting Security Lifecycle Listener (Scored)
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+securityListener = elementTree.SubElement(serverRoot, 'Listener')
+securityListener.set("className", "org.apache.catalina.security.SecurityListener")
+securityListener.set("minimumUmask", "0007")
+serverTree.write(catalinaHome + '/conf/server.xml')
 # 10.19 use the logEffectiveWebXml and metadata-complete settings for deployingapplications in production (Scored)
+webAppsDir = catalinaHome + '/webapps/'
+dirs = os.listdir(webAppsDir)
+for dir in dirs:
+    dstDir = webAppsDir + dir + '/WEB-INF'
+    elementTree.register_namespace('', "http://xmlns.jcp.org/xml/ns/javaee")
+    elementTree.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
+    elementTree.register_namespace('schemaLocation', "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd")
+    serverTree = elementTree.parse(dstDir + '/web.xml')
+    serverRoot = serverTree.getroot()
+    serverRoot.set('metadata-complete', 'true')
+    serverTree.write(dstDir + '/web.xml')
