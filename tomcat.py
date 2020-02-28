@@ -6,6 +6,7 @@ from pyjavaproperties import Properties
 import xml.etree.ElementTree as elementTree
 import os
 import configparser
+import re
 
 # Global Variables
 # Path to the apache root directory
@@ -241,13 +242,38 @@ dirs = os.listdir(webAppsDir)
 
 for dir in dirs:
     dstLoggingPropertiesDir = webAppsDir + dir + '/WEB-INF/classes'
-    if os.path.exists(dstLoggingPropertiesDir):
-        dstLoggingPropertiesDir = dstLoggingPropertiesDir + '/logging.properties'
-        copy2(sourceLoggingPorperties, dstLoggingPropertiesDir)
+    if not os.path.exists(dstLoggingPropertiesDir):
+        os.mkdir(dstLoggingPropertiesDir)
+    dstLoggingPropertiesDir = dstLoggingPropertiesDir + '/logging.properties'
+    copy2(sourceLoggingPorperties, dstLoggingPropertiesDir)
+    # 7.2 Specify file handler in logging.properties files (Scored)
+    line = "handlers = 1catalina.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler"
+    logfile = open(dstLoggingPropertiesDir)
+    loglist = logfile.readlines()
+    logfile.close()
+    if line not in loglist:
+        loglist.append(line)
+    new_logfile = open(dstLoggingPropertiesDir, 'w')
+    for lines in loglist:
+        new_logfile.write(lines)
+    # 7.3 Ensure className is set correctly in context.xml (Scored)
+    # 7.4 Ensure directory in context.xml is a secure location (Scored)
+    contextXMLFile = webAppsDir + dir + '/META-INF/context.xml'
+    if os.path.exists(contextXMLFile):
+        serverTree = elementTree.parse(contextXMLFile)
+        serverRoot = serverTree.getroot()
+        connectors = findElementsByTagname(serverRoot, 'Valve')
+        for connector in connectors:
+            if connector.get("className") == "org.apache.catalina.valves.RemoteAddrValve":
+                connector.set("className", "org.apache.catalina.valves.AccessLogValve")
+        realmElement = serverRoot.find("Valve")
+        realmElement.set("directory", "$CATALINA_HOME/logs/")
+        realmElement.set("prefix", "access_log")
+        realmElement.set("fileDateFormat", "yyyy-MM-dd.HH")
+        realmElement.set("suffix", ".log")
+        realmElement.set("pattern", "%t %H cookie:%{SESSIONID}c request:%{SESSIONID}r %m %U %s %q %r")
+        serverTree.write(contextXMLFile)
 
-# 7.2 Specify file handler in logging.properties files (Scored)
-# 7.3 Ensure className is set correctly in context.xml (Scored)
-# 7.4 Ensure directory in context.xml is a secure location (Scored)
 # 7.5 Ensure pattern in context.xml is correct (Scored)
 # 7.6 Ensure directory in logging.properties is a secure location (Scored)
 # 7.7 Configure log file size limit (Scored)
