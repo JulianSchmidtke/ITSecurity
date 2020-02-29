@@ -326,14 +326,13 @@ for dir in dirs:
         for valve in valves:
             if valve.get("className") == "org.apache.catalina.valves.RemoteAddrValve":
                 valve.set("className", 'org.apache.catalina.valves.AccessLogValve')
-        # 7.4 Ensure directory in context.xml is a secure location (Scored)
-        # 7.5 Ensure pattern in context.xml is correct (Scored)
-        valveElement = serverRoot.find("Valve")
-        valveElement.set("directory", "$CATALINA_HOME/logs/")
-        valveElement.set("prefix", "access_log")
-        valveElement.set("fileDateFormat", "yyyy-MM-dd.HH")
-        valveElement.set("suffix", ".log")
-        valveElement.set("pattern", "%t %H cookie:%{SESSIONID}c request:%{SESSIONID}r %m %U %s %q %r")
+            # 7.4 Ensure directory in context.xml is a secure location (Scored)
+            # 7.5 Ensure pattern in context.xml is correct (Scored)
+            valve.set("directory", "$CATALINA_HOME/logs/")
+            valve.set("prefix", "access_log")
+            valve.set("fileDateFormat", "yyyy-MM-dd.HH")
+            valve.set("suffix", ".log")
+            valve.set("pattern", "%t %H cookie:%{SESSIONID}c request:%{SESSIONID}r %m %U %s %q %r")
         serverTree.write(contextXMLFile)
 
 # 7.4 also
@@ -357,20 +356,22 @@ for lines in loglist:
 # 9 Application Deployment
 # 9.1 Starting Tomcat with Security Manager (Scored)
 # add -security to tomcat startup scrip in /etc/init.d
-#engine -> host -> service -> root autoDeploy = false
+
 # 9.2 Disabling auto deployment of applications (Scored)
-serverXMLFile = catalinaHome + '/conf/server.xml'
+serverXMLFile = catalinaHome + 'conf/server.xml'
 if os.path.exists(serverXMLFile):
     serverTree = elementTree.parse(serverXMLFile)
     serverRoot = serverTree.getroot()
-    service = findElementsByTagname(serverRoot, 'Service')
-    engine = findElementsByTagname(service, 'Engine')
-    hosts = findElementsByTagname(engine, 'Host')
-    for host in hosts:
-        if host.get("autoDeploy") == "true":
-            host.set("autoDeploy", 'false')
-
-# 9.3 Disable deploy on startup of applications (Scored)
+    serviceElements = serverRoot.findall('Service')
+    for serviceElement in serviceElements:
+        engineElements = serviceElement.findall('Engine')
+        for engineElement in engineElements:
+            hostElement = engineElement.find('Host')
+            if hostElement.get("autoDeploy") == "true":
+                hostElement.set("autoDeploy", "false")
+            # 9.3 Disable deploy on startup of applications (Scored)
+            hostElement.set("deployOnStartup", "false")
+    serverTree.write(serverXMLFile)
 
 # 10 Miscellaneous Configuration Settings
 # 10.1 Ensure Web content directory is on a separate partition from the Tomcat
