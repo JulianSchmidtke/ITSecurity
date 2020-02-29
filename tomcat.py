@@ -77,7 +77,7 @@ if not managerApplicationUtilized:
     if os.path.exists(catalinaHome + 'webapps/manager/'):
         rmtree(catalinaHome + 'webapps/manager/')
     if os.path.exists(catalinaHome + 'conf/Catalina/localhost/manager.xml'):
-        rmtree(catalinaHome + 'conf/Catalina/localhost/manager.xml')
+        os.remove(catalinaHome + 'conf/Catalina/localhost/manager.xml')
 
 # 1.2  Disable Unused Connectors (Not Scored)
 # Not Scored
@@ -436,6 +436,7 @@ serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
 serverRoot = serverTree.getroot()
 securityListener = elementTree.SubElement(serverRoot, 'Listener')
 securityListener.set("className", "org.apache.catalina.security.SecurityListener")
+securityListener.set("checkedOsUsers", "root")
 securityListener.set("minimumUmask", "0007")
 serverTree.write(catalinaHome + '/conf/server.xml')
 # 10.19 use the logEffectiveWebXml and metadata-complete settings for deployingapplications in production (Scored)
