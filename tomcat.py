@@ -134,6 +134,7 @@ errorJSP = open(catalinaHome + 'conf/error.jsp', "w+")
 errorJSP.write("<%@ page contentType=\"text/html;charset=UTF-8\" language=\"java\" %><%@ page isErrorPage=\"true\" %><!DOCTYPE html><html><head>    <title>Error Page</title></head><body><h1>An error has occurred.</h1><div style=\"color: #F00;\">    Error message: <%= exception.toString() %></div></body></html>")
 errorJSP.close()
 
+# 2.5 Disable client facing Stack Traces (Scored)
 webTree = elementTree.parse(catalinaHome + '/conf/web.xml')
 webRoot = webTree.getroot()
 errorPage = elementTree.SubElement(webRoot, "error-page")
@@ -147,8 +148,21 @@ filterName = elementTree.SubElement(filter, "filter-name")
 filterName.text = "httpHeaderSecurity"
 filterClass = elementTree.SubElement(filter, "filter-class")
 filterClass.text = "org.apache.catalina.filters.HttpHeaderSecurityFilter"
+initParam = elementTree.SubElement(filter, "init-param")
+paramName = elementTree.SubElement(initParam, "param-name")
+paramName.text = "antiClickJackingOption"
+paramValue = elementTree.SubElement(initParam, "param-value")
+paramValue.text = "SAMEORIGIN"
 asyncSupported = elementTree.SubElement(filter, "async-supported")
 asyncSupported.text = "true"
+
+filterMapping = elementTree.SubElement(webRoot, "filter-mapping")
+filterName = elementTree.SubElement(filterMapping, "filter-name")
+filterName.text = "httpHeaderSecurity"
+urlPattern = elementTree.SubElement(filterMapping, "url-pattern")
+urlPattern.text = "/*"
+dispatcher = elementTree.SubElement(filterMapping, "dispatcher")
+dispatcher.text = "REQUEST"
 
 webTree.write(catalinaHome + '/conf/web.xml')
 
