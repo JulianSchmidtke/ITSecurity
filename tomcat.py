@@ -12,7 +12,7 @@ import re
 # Path to the apache root directory
 catalinaHome = "/opt/tomcat/"
 catalinaHomeBackup = catalinaHome + "backup/"
-managerApplicationUtilized = False
+managerApplicationUtilized = True
 # Username of the Tomcat admin
 tomcatAdmin = 1002
 # Group of tomcat users
@@ -142,6 +142,16 @@ exceptionType.text = "java.lang.Throwable"
 location = elementTree.SubElement(errorPage, "location")
 location.text = "/error.jsp"
 
+filter = elementTree.SubElement(webRoot, "filter")
+filterName = elementTree.SubElement(filter, "filter-name")
+filterName.text = "httpHeaderSecurity"
+filterClass = elementTree.SubElement(filter, "filter-class")
+filterClass.text = "org.apache.catalina.filters.HttpHeaderSecurityFilter"
+asyncSupported = elementTree.SubElement(filter, "async-supported")
+asyncSupported.text = "true"
+
+webTree.write(catalinaHome + '/conf/web.xml')
+
 # 2.6 Turn off TRACE (Scored)
 # Get server.xml
 serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
@@ -178,7 +188,7 @@ os.chown(catalinaHome, tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome, groupRemoveWriteWorldRemoveAll)
 # chmod g-w,o-rwx $CATALINA_HOME
 
-# 4.2 Restrict access to $CATALINA_BASE (Scored)
+# 4.2 Restrict access to $CATALINA_BASE (Scored)                                                                                                        
 # Not used
 
 # 4.3 Restrict access to Tomcat configuration directory (Scored)
@@ -302,11 +312,11 @@ for dir in dirs:
     dstLoggingPropertiesDir = webAppsDir + dir + '/WEB-INF/classes/'
     if not os.path.exists(dstLoggingPropertiesDir):
         os.mkdir(dstLoggingPropertiesDir)
-    dstLoggingPropertiesDir = dstLoggingPropertiesDir + '/logging.properties'
-    copy2(sourceLoggingPorperties, dstLoggingPropertiesDir)
+    dstLoggingPropertiesPath = dstLoggingPropertiesDir + '/logging.properties'
+    copy2(sourceLoggingPorperties, dstLoggingPropertiesPath)
     # 7.2 Specify file handler in logging.properties files (Scored)
     handlerLine = "handlers = 1catalina.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler"
-    logfile = open(dstLoggingPropertiesDir)
+    logfile = open(dstLoggingPropertiesPath)
     loglist = logfile.readlines()
     logfile.close()
     if handlerLine not in loglist:
@@ -322,7 +332,7 @@ for dir in dirs:
     # 7.7 Configure log file size limit (Scored)
     loglist.append("java.util.logging.FileHandler.limit=10000")
 
-    new_logfile = open(dstLoggingPropertiesDir, 'w')
+    new_logfile = open(dstLoggingPropertiesPath, 'w')
     for lines in loglist:
         new_logfile.write(lines)
 
@@ -383,7 +393,7 @@ if os.path.exists(serverXMLFile):
             if hostElement.get("autoDeploy") == "true":
                 hostElement.set("autoDeploy", "false")
             # 9.3 Disable deploy on startup of applications (Scored)
-            hostElement.set("deployOnStartup", "false")
+            hostElement.set("deployOnStartup", "true")
     serverTree.write(serverXMLFile)
 
 # 10 Miscellaneous Configuration Settings
