@@ -366,9 +366,18 @@ if os.path.exists(serverXMLFile):
 # 10.6 Enable strict servlet Compliance (Scored)
 # 10.7 Turn off session façade recycling (Scored)
 # 10.8 Do not allow additional path delimiters (Scored)
+# Standardmäßig deaktiviert
 # 10.9 Do not allow custom header status messages (Scored)
+# Standardmäßig deaktiviert
 # 10.10 Configure connectionTimeout (Scored)
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+connectors = findElementsByTagname(serverRoot, 'Connector')
+for connector in connectors:
+    connector.set("connectionTimeout", "60000")
+serverTree.write(catalinaHome + '/conf/server.xml')
 # 10.11 Configure maxHttpHeaderSize (Scored)
+# Standardmäßig deaktiviert
 # 10.12 Force SSL for all applications (Scored)
 # TODO: Wir haben noch gar kein Security Constraint
 # 10.13 Do not allow symbolic linking (Scored)
