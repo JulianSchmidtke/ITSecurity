@@ -33,12 +33,12 @@ with open('/home/lukas/apache-tomcat-8.5.37/bin/catalina-test.sh', 'w+') as outf
 # root = tree.getroot()
 # root.set("shutdown","herunterfahren")
 
-print (root.tag, root.attrib)
-errorseite = et.SubElement(root, "error-page")
-errorseitesub = et.SubElement(errorseite, "exception-type")
-errorseitesub2 =et.SubElement(errorseite, "location")
-errorseitesub.text = "java.lang.Throwable"
-errorseitesub2.text = "error.jsp"
+# print (root.tag, root.attrib)
+# errorseite = et.SubElement(root, "error-page")
+# errorseitesub = et.SubElement(errorseite, "exception-type")
+# errorseitesub2 =et.SubElement(errorseite, "location")
+# errorseitesub.text = "java.lang.Throwable"
+# errorseitesub2.text = "error.jsp"
 
 securitylistener = et.SubElement(root, "Listener")
 securitylistener.set("className", "org.apache.catalina.security.SecurityListener")
@@ -98,27 +98,27 @@ for subelement in element:
 # p['server.built'] = 'Servererstellt'
 # serverinfo.write('/home/lukas/apache-tomcat-8.5.37/lib/org/apache/catalina/util/ServerInfo.properties')
 
-logging = open ('/home/lukas/apache-tomcat-8.5.37/conf/logging.properties','w+')
-l = Properties()
-l.load(source_data=logging.read())
-l['handlers'] = '1catalina.org.apache.juli.AsyncFileHandler, 2localhost.org.apache.juli.AsyncFileHandler, 3manager.org.apache.juli.AsyncFileHandler, 4host-manager.org.apache.juli.AsyncFileHandler, java.util.logging.ConsoleHandler/handlers = 1catalina.org.apache.juli.AsyncFileHandler, 2localhost.org.apache.juli.AsyncFileHandler, 3manager.org.apache.juli.AsyncFileHandler, 4host-manager.org.apache.juli.AsyncFileHandler, 5org.apache.juli.FileHandler, java.util.logging.ConsoleHandler /home/lukas/apache-tomcat-8.5.37/webapps/examples/WEB-INF/classes/logging.properties'
-l['org.apache.juli.FileHandler.leve'] = 'FINEST'
-l['java.util.logging.FileHandler.limit'] = '10000'
+# logging = open ('/home/lukas/apache-tomcat-8.5.37/conf/logging.properties','w+')
+# l = Properties()
+# l.load(source_data=logging.read())
+# l['handlers'] = '1catalina.org.apache.juli.AsyncFileHandler, 2localhost.org.apache.juli.AsyncFileHandler, 3manager.org.apache.juli.AsyncFileHandler, 4host-manager.org.apache.juli.AsyncFileHandler, java.util.logging.ConsoleHandler/handlers = 1catalina.org.apache.juli.AsyncFileHandler, 2localhost.org.apache.juli.AsyncFileHandler, 3manager.org.apache.juli.AsyncFileHandler, 4host-manager.org.apache.juli.AsyncFileHandler, 5org.apache.juli.FileHandler, java.util.logging.ConsoleHandler /home/lukas/apache-tomcat-8.5.37/webapps/examples/WEB-INF/classes/logging.properties'
+# l['org.apache.juli.FileHandler.leve'] = 'FINEST'
+# l['java.util.logging.FileHandler.limit'] = '10000'
 
-logging.write('/home/lukas/apache-tomcat-8.5.37/conf/logging.properties')
+# logging.write('/home/lukas/apache-tomcat-8.5.37/conf/logging.properties')
 
-print ("context.xml")
+# print ("context.xml")
 
-baum = et.parse('/home/lukas/apache-tomcat-8.5.37/webapps/nochmalanders/META-INF/context.xml')
-reet = baum.getroot()
+# baum = et.parse('/home/lukas/apache-tomcat-8.5.37/webapps/nochmalanders/META-INF/context.xml')
+# reet = baum.getroot()
 
-valve = et.SubElement(reet, "Valve") 
-valve.set("className", "org.apache.catalina.valves.AccessLogValve")
-valve.set("directory", "/home/lukas/apache-tomcat-8.5.37/logs/")
-valve.set("prefix", "access_log")
-valve.set("fileDateFormat", "yyyy-MM-dd.HH")
-valve.set("suffix", ".log")
-valve.set("pattern", "%t %H cookie:%{SESSIONID}c request:%{SESSIONID}r %m %U %s %q %r")
+# valve = et.SubElement(reet, "Valve") 
+# valve.set("className", "org.apache.catalina.valves.AccessLogValve")
+# valve.set("directory", "/home/lukas/apache-tomcat-8.5.37/logs/")
+# valve.set("prefix", "access_log")
+# valve.set("fileDateFormat", "yyyy-MM-dd.HH")
+# valve.set("suffix", ".log")
+# valve.set("pattern", "%t %H cookie:%{SESSIONID}c request:%{SESSIONID}r %m %U %s %q %r")
 
 resource = et.SubElement(reet, "Resources")
 resource.set("allowLinking", "false")
@@ -137,17 +137,17 @@ for child in reet:
 
 baum.write('/home/lukas/apache-tomcat-8.5.37/webapps/nochmalanders/META-INF/context.xml')
 
-print ("context2.xml")
-baum2 = et.parse('/home/lukas/apache-tomcat-8.5.37/webapps/host-manager/META-INF/context.xml')
-reet2 = baum2.getroot()
+# print ("context2.xml")
+# baum2 = et.parse('/home/lukas/apache-tomcat-8.5.37/webapps/host-manager/META-INF/context.xml')
+# reet2 = baum2.getroot()
 
-valve = et.SubElement(reet2, "Valve") 
-valve.set("className", "org.apache.catalina.valves.AccessLogValve")
-valve.set("directory", "/home/lukas/apache-tomcat-8.5.37/logs/")
-valve.set("prefix", "access_log")
-valve.set("fileDateFormat", "yyyy-MM-dd.HH")
-valve.set("suffix", ".log")
-valve.set("pattern", "%t %H cookie:%{SESSIONID}c request:%{SESSIONID}r %m %U %s %q %r")
+# valve = et.SubElement(reet2, "Valve") 
+# valve.set("className", "org.apache.catalina.valves.AccessLogValve")
+# valve.set("directory", "/home/lukas/apache-tomcat-8.5.37/logs/")
+# valve.set("prefix", "access_log")
+# valve.set("fileDateFormat", "yyyy-MM-dd.HH")
+# valve.set("suffix", ".log")
+# valve.set("pattern", "%t %H cookie:%{SESSIONID}c request:%{SESSIONID}r %m %U %s %q %r")
 
 resource = et.SubElement(reet2, "Resources")
 resource.set("allowLinking", "false")
