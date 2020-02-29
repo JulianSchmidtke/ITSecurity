@@ -10,13 +10,13 @@ import re
 
 # Global Variables
 # Path to the apache root directory
-catalinaHome = "C:/Users/Julian/Desktop/apache-tomcat-8.5.51/"
+catalinaHome = "/opt/tomcat/"
 catalinaHomeBackup = catalinaHome + "backup/"
 managerApplicationUtilized = False
 # Username of the Tomcat admin
-tomcatAdmin = "tomcat_admin"
+tomcatAdmin = 1002
 # Group of tomcat users
-tomcatGroup = "tomcat"
+tomcatGroup = 1001
 
 # Global Functions
 
@@ -294,12 +294,12 @@ serverTree.write(catalinaHome + '/conf/server.xml')
 # 7 Establish and Protect Logging Facilities
 # 7.1 Application specific logging (Scored)
 sourceLoggingPorperties = catalinaHome + '/conf/logging.properties'
-webAppsDir = catalinaHome + '/webapps/'
+webAppsDir = catalinaHome + 'webapps/'
 
 dirs = os.listdir(webAppsDir)
 
 for dir in dirs:
-    dstLoggingPropertiesDir = webAppsDir + dir + '/WEB-INF/classes'
+    dstLoggingPropertiesDir = webAppsDir + dir + '/WEB-INF/classes/'
     if not os.path.exists(dstLoggingPropertiesDir):
         os.mkdir(dstLoggingPropertiesDir)
     dstLoggingPropertiesDir = dstLoggingPropertiesDir + '/logging.properties'
@@ -368,7 +368,7 @@ for lines in loglist:
 
 # 9 Application Deployment
 # 9.1 Starting Tomcat with Security Manager (Scored)
-# add -security to tomcat startup scrip in /etc/init.d
+# TODO add -security to tomcat startup scrip in /etc/init.d
 
 # 9.2 Disabling auto deployment of applications (Scored)
 serverXMLFile = catalinaHome + 'conf/server.xml'
