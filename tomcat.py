@@ -67,6 +67,7 @@ if not managerApplicationUtilized:
         rmtree(catalinaHome + 'conf/Catalina/localhost/manager.xml')
 
 # 1.2  Disable Unused Connectors (Not Scored)
+# Not Scored
 
 # 2 Limit Server Platform Information Leaks
 # Open and Unzip Jar
@@ -218,17 +219,42 @@ for serviceElement in serviceElements:
 serverTree.write(catalinaHome + '/conf/server.xml')
 
 # 6 Connector Security
-# TODO:
 # 6.1 Setup Client-cert Authentication (Scored)
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+connectors = findElementsByTagname(serverRoot, 'Connector')
+for connector in connectors:
+    connector.set("clientAuth", "true") 
+serverTree.write(catalinaHome + '/conf/server.xml')
 # 6.2 Ensure SSLEnabled is set to True for Sensitive Connectors (Not Scored)
+# Not Scored
 # 6.3 Ensure scheme is set accurately (Scored)
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+connectors = findElementsByTagname(serverRoot, 'Connector')
+for connector in connectors:
+    if connector.get('protocol') > "HTTPS":
+        connector.set("scheme", "https") 
+    else:
+        connector.set("scheme", "http") 
+
+serverTree.write(catalinaHome + '/conf/server.xml')
 # 6.4 Ensure secure is set to true only for SSL-enabled Connectors (Scored)
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+connectors = findElementsByTagname(serverRoot, 'Connector')
+for connector in connectors:
+    if connector.get('SSLEnabled') == "True":
+        connector.set("secure", "true") 
+    else:
+        connector.set("secure", "false") 
+        
+serverTree.write(catalinaHome + '/conf/server.xml')
 # 6.5 Ensure SSL Protocol is set to TLS for Secure Connectors (Scored)
 serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
 serverRoot = serverTree.getroot()
 connectors = findElementsByTagname(serverRoot, 'Connector')
 for connector in connectors:
-    
     if connector.get('SSLEnabled') == "True":
         connector.set("sslProtocol", "TLS") 
 serverTree.write(catalinaHome + '/conf/server.xml')
@@ -330,8 +356,11 @@ if os.path.exists(serverXMLFile):
 # 10 Miscellaneous Configuration Settings
 # 10.1 Ensure Web content directory is on a separate partition from the Tomcat
 # system files (Not Scored)
+# Not Scored
 # 10.2 Restrict access to the web administration (Not Scored)
+# Not Scored
 # 10.3 Restrict manager application (Not Scored)
+# Not Scored
 # 10.4 Force SSL when accessing the manager application (Scored)
 # 10.5 Rename the manager application (Scored)
 # 10.6 Enable strict servlet Compliance (Scored)
@@ -341,10 +370,15 @@ if os.path.exists(serverXMLFile):
 # 10.10 Configure connectionTimeout (Scored)
 # 10.11 Configure maxHttpHeaderSize (Scored)
 # 10.12 Force SSL for all applications (Scored)
+# TODO: Wir haben noch gar kein Security Constraint
 # 10.13 Do not allow symbolic linking (Scored)
+# Standardmäßig deaktiviert
 # 10.14 Do not run applications as privileged (Scored)
+# Standardmäßig deaktiviert
 # 10.15 Do not allow cross context requests (Scored)
+# Standardmäßig deaktiviert
 # 10.16 Do not resolve hosts on logging valves (Scored)
+# Standardmäßig deaktiviert
 # 10.17 Enable memory leak listener (Scored)
 serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
 serverRoot = serverTree.getroot()
