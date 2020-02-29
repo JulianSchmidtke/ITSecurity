@@ -204,12 +204,17 @@ os.chmod(catalinaHome + '/conf/web.xml', groupRemoveWriteWorldRemoveAll)
 # 5.2 Use LockOut Realms (Scored)
 serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
 serverRoot = serverTree.getroot()
-realmElement = serverRoot.find('Realm')
-realmElement.set("className", "org.apache.catalina.realm.LockOutRealm")
-realmElement.set("failureCount", "3")
-realmElement.set("lockoutTime", "600")
-realmElement.set("cacheSize", "1000")
-realmElement.set("cacheRemovalWarningTime", "3600")
+serviceElements = serverRoot.findall('Service')
+for serviceElement in serviceElements:
+    engineElements = serviceElement.findall('Engine')
+    for engineElement in engineElements:
+        realmElement = engineElement.find('Realm')
+        realmElement.set("className", "org.apache.catalina.realm.LockOutRealm")
+        realmElement.set("failureCount", "3")
+        realmElement.set("lockoutTime", "600")
+        realmElement.set("cacheSize", "1000")
+        realmElement.set("cacheRemovalWarningTime", "3600")
+
 serverTree.write(catalinaHome + '/conf/server.xml')
 
 # 6 Connector Security
@@ -223,8 +228,9 @@ serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
 serverRoot = serverTree.getroot()
 connectors = findElementsByTagname(serverRoot, 'Connector')
 for connector in connectors:
-    if connector.get('SSLEnabled') == True:
-        connector.set("sslProtocol", "TLS")
+    
+    if connector.get('SSLEnabled') == "True":
+        connector.set("sslProtocol", "TLS") 
 serverTree.write(catalinaHome + '/conf/server.xml')
 
 # 7 Establish and Protect Logging Facilities
@@ -340,5 +346,27 @@ if os.path.exists(serverXMLFile):
 # 10.15 Do not allow cross context requests (Scored)
 # 10.16 Do not resolve hosts on logging valves (Scored)
 # 10.17 Enable memory leak listener (Scored)
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+leakPreventionListener = elementTree.SubElement(serverRoot, 'Listener')
+leakPreventionListener.set("className", "org.apache.catalina.core.JreMemoryLeakPreventionListener")
+serverTree.write(catalinaHome + '/conf/server.xml')
 # 10.18 Setting Security Lifecycle Listener (Scored)
+serverTree = elementTree.parse(catalinaHome + '/conf/server.xml')
+serverRoot = serverTree.getroot()
+securityListener = elementTree.SubElement(serverRoot, 'Listener')
+securityListener.set("className", "org.apache.catalina.security.SecurityListener")
+securityListener.set("minimumUmask", "0007")
+serverTree.write(catalinaHome + '/conf/server.xml')
 # 10.19 use the logEffectiveWebXml and metadata-complete settings for deployingapplications in production (Scored)
+webAppsDir = catalinaHome + '/webapps/'
+dirs = os.listdir(webAppsDir)
+for dir in dirs:
+    dstDir = webAppsDir + dir + '/WEB-INF'
+    elementTree.register_namespace('', "http://xmlns.jcp.org/xml/ns/javaee")
+    elementTree.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
+    elementTree.register_namespace('schemaLocation', "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd")
+    serverTree = elementTree.parse(dstDir + '/web.xml')
+    serverRoot = serverTree.getroot()
+    serverRoot.set('metadata-complete', 'true')
+    serverTree.write(dstDir + '/web.xml')
