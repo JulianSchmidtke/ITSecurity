@@ -150,19 +150,15 @@ filterClass = elementTree.SubElement(filter, "filter-class")
 filterClass.text = "org.apache.catalina.filters.HttpHeaderSecurityFilter"
 initParam = elementTree.SubElement(filter, "init-param")
 paramName = elementTree.SubElement(initParam, "param-name")
-paramName.text = "antiClickJackingOption"
+paramName.text = "antiClickJackingEnabled"
 paramValue = elementTree.SubElement(initParam, "param-value")
-paramValue.text = "SAMEORIGIN"
-asyncSupported = elementTree.SubElement(filter, "async-supported")
-asyncSupported.text = "true"
+paramValue.text = "true"
 
 filterMapping = elementTree.SubElement(webRoot, "filter-mapping")
 filterName = elementTree.SubElement(filterMapping, "filter-name")
 filterName.text = "httpHeaderSecurity"
 urlPattern = elementTree.SubElement(filterMapping, "url-pattern")
 urlPattern.text = "/*"
-dispatcher = elementTree.SubElement(filterMapping, "dispatcher")
-dispatcher.text = "REQUEST"
 
 webTree.write(catalinaHome + '/conf/web.xml')
 
