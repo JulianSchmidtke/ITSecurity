@@ -10,7 +10,7 @@ import re
 
 # Global Variables
 # Path to the apache root directory
-catalinaHome = "/opt/tomcat/"
+catalinaHome = "C:\Users\domin\Desktop\6. Sem\Information security\tomcat-test\apache-tomcat-8.5.51\"
 catalinaHomeBackup = catalinaHome + "backup/"
 managerApplicationUtilized = True
 # Username of the Tomcat admin
@@ -150,19 +150,15 @@ filterClass = elementTree.SubElement(filter, "filter-class")
 filterClass.text = "org.apache.catalina.filters.HttpHeaderSecurityFilter"
 initParam = elementTree.SubElement(filter, "init-param")
 paramName = elementTree.SubElement(initParam, "param-name")
-paramName.text = "antiClickJackingOption"
+paramName.text = "antiClickJackingEnabled"
 paramValue = elementTree.SubElement(initParam, "param-value")
-paramValue.text = "SAMEORIGIN"
-asyncSupported = elementTree.SubElement(filter, "async-supported")
-asyncSupported.text = "true"
+paramValue.text = "true"
 
 filterMapping = elementTree.SubElement(webRoot, "filter-mapping")
 filterName = elementTree.SubElement(filterMapping, "filter-name")
 filterName.text = "httpHeaderSecurity"
 urlPattern = elementTree.SubElement(filterMapping, "url-pattern")
 urlPattern.text = "/*"
-dispatcher = elementTree.SubElement(filterMapping, "dispatcher")
-dispatcher.text = "REQUEST"
 
 webTree.write(catalinaHome + '/conf/web.xml')
 
@@ -198,7 +194,7 @@ groupRemoveWriteWorldRemoveAll = 0o750  # g-w, o-rwx
 worldRemoveAll = 0o770  # o-rwx
 
 # 4.1 Restrict access to $CATALINA_HOME (Scored)
-os.chown(catalinaHome, tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome, tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome, groupRemoveWriteWorldRemoveAll)
 # chmod g-w,o-rwx $CATALINA_HOME
 
@@ -206,53 +202,53 @@ os.chmod(catalinaHome, groupRemoveWriteWorldRemoveAll)
 # Not used
 
 # 4.3 Restrict access to Tomcat configuration directory (Scored)
-os.chown(catalinaHome + '/conf/', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/conf/', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/conf/', groupRemoveWriteWorldRemoveAll)
 
 # 4.4 Restrict access to Tomcat logs directory (Scored)
-os.chown(catalinaHome + '/logs/', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/logs/', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/logs/', worldRemoveAll)
 
 # 4.5 Restrict access to Tomcat temp directory (Scored)
-os.chown(catalinaHome + '/temp/', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/temp/', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/temp/', worldRemoveAll)
 
 # 4.6 Restrict access to Tomcat binaries directory (Scored)
-os.chown(catalinaHome + '/bin/', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/bin/', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/bin/', worldRemoveAll)
 
 # 4.7 Restrict access to Tomcat web application directory (Scored)
-os.chown(catalinaHome + '/webapps/', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/webapps/', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/webapps/', worldRemoveAll)
 
 # 4.8 Restrict access to Tomcat catalina.policy (Scored)
-os.chown(catalinaHome + '/conf/catalina.policy', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/conf/catalina.policy', tomcatAdmin, tomcatGroup)
 
 # 4.9 Restrict access to Tomcat catalina.properties (Scored)
-os.chown(catalinaHome + '/conf/catalina.properties', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/conf/catalina.properties', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/conf/catalina.properties',
          groupRemoveWriteWorldRemoveAll)
 
 # 4.10 Restrict access to Tomcat context.xml (Scored)
-os.chown(catalinaHome + '/conf/context.xml', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/conf/context.xml', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/conf/context.xml', groupRemoveWriteWorldRemoveAll)
 
 # 4.11 Restrict access to Tomcat logging.properties (Scored)
-os.chown(catalinaHome + '/conf/logging.properties', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/conf/logging.properties', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/conf/logging.properties',
          groupRemoveWriteWorldRemoveAll)
 
 # 4.12 Restrict access to Tomcat server.xml (Scored)
-os.chown(catalinaHome + '/conf/server.xml', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/conf/server.xml', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/conf/server.xml', groupRemoveWriteWorldRemoveAll)
 
 # 4.13 Restrict access to Tomcat tomcat-users.xml (Scored)
-os.chown(catalinaHome + '/conf/tomcat-users.xml', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/conf/tomcat-users.xml', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/conf/tomcat-users.xml',
          groupRemoveWriteWorldRemoveAll)
 
 # 4.14 Restrict access to Tomcat web.xml (Scored)
-os.chown(catalinaHome + '/conf/web.xml', tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + '/conf/web.xml', tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + '/conf/web.xml', groupRemoveWriteWorldRemoveAll)
 
 # 5 Configure Realms
@@ -351,7 +347,7 @@ for dir in dirs:
         new_logfile.write(lines)
 
     # 7.6 also
-    os.chown(logFileLoc, tomcatAdmin, tomcatGroup)
+    #os.chown(logFileLoc, tomcatAdmin, tomcatGroup)
     os.chmod(logFileLoc, groupRemoveWriteWorldRemoveAll)
 
     # 7.3 Ensure className is set correctly in context.xml (Scored)
@@ -373,7 +369,7 @@ for dir in dirs:
         serverTree.write(contextXMLFile)
 
 # 7.4 also
-os.chown(catalinaHome + "/logs", tomcatAdmin, tomcatGroup)
+#os.chown(catalinaHome + "/logs", tomcatAdmin, tomcatGroup)
 os.chmod(catalinaHome + "/logs", groupRemoveWriteWorldRemoveAll)
 
 # 8 Configure Catalina Policy
