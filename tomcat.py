@@ -362,9 +362,13 @@ if os.path.exists(serverXMLFile):
 # 10.3 Restrict manager application (Not Scored)
 # Not Scored
 # 10.4 Force SSL when accessing the manager application (Scored)
+# Haben wir nicht
 # 10.5 Rename the manager application (Scored)
+# Haben wir nicht
 # 10.6 Enable strict servlet Compliance (Scored)
+# TODO:
 # 10.7 Turn off session façade recycling (Scored)
+# TODO
 # 10.8 Do not allow additional path delimiters (Scored)
 # Standardmäßig deaktiviert
 # 10.9 Do not allow custom header status messages (Scored)
