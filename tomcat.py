@@ -45,6 +45,19 @@ def findElementsByTagname(root, tagname):
     elements.extend(new_elements)
     return elements
 
+def getAllFilePaths(directory): 
+    # initializing empty file paths list 
+    filePaths = [] 
+
+    # crawling through directory and subdirectories 
+    for root, directories, files in os.walk(directory): 
+        for filename in files: 
+            # join the two strings in order to form the full filepath. 
+            filePath = os.path.join(root, filename) 
+            filePaths.append(filePath) 
+  
+    # returning all file paths 
+    return filePaths 
 
 # Backup
 backupFolder(catalinaHome, catalinaHomeBackup, 'webapps/docs/')
@@ -76,9 +89,9 @@ with ZipFile('catalina.jar', 'r') as zipObj:
     zipObj.extractall()
 
 # Open serverinfo
+serverInfoPropertiesPath = 'org/apache/catalina/util/ServerInfo.properties'
 serverInfoProperties = Properties()
-serverInfoProperties.load(open(
-    catalinaHome + 'lib/org/apache/catalina/util/ServerInfo.properties'))
+serverInfoProperties.load(open(serverInfoPropertiesPath))
 
 # 2.1 Alter the Advertised server.info String (Scored)
 serverInfoProperties['server.info'] = ''
@@ -88,11 +101,17 @@ serverInfoProperties['server.number'] = ''
 serverInfoProperties['server.built'] = ''
 
 # save serverinfo
-serverInfoProperties.store(open(
-    catalinaHome + 'lib/org/apache/catalina/util/ServerInfo.properties', 'w'))
-
-# TODO: Save and Zip Jar
-
+serverInfoProperties.store(open(serverInfoPropertiesPath, 'w'))
+filePaths = getAllFilePaths('org/')
+filePaths2 = getAllFilePaths('META-INF/')
+with ZipFile('catalina.jar', 'w') as zipObj:
+    for file in filePaths: 
+        zipObj.write(file) 
+    for file in filePaths2: 
+        zipObj.write(file)
+rmtree('org/')
+rmtree('META-INF/')
+os.chdir(catalinaHome)
 
 # 2.4 Disable X-Powered-By HTTP Header and Rename the Server Value for all
 # Connectors (Scored)
