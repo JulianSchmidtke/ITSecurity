@@ -77,7 +77,7 @@ if not managerApplicationUtilized:
     if os.path.exists(catalinaHome + 'webapps/manager/'):
         rmtree(catalinaHome + 'webapps/manager/')
     if os.path.exists(catalinaHome + 'conf/Catalina/localhost/manager.xml'):
-        rmtree(catalinaHome + 'conf/Catalina/localhost/manager.xml')
+        os.remove(catalinaHome + 'conf/Catalina/localhost/manager.xml')
 
 # 1.2  Disable Unused Connectors (Not Scored)
 # Not Scored
