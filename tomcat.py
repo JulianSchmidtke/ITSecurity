@@ -127,7 +127,20 @@ for connector in connectors:
 serverTree.write(catalinaHome + '/conf/server.xml')
 
 # 2.5 Disable client facing Stack Traces (Scored)
-# TODO:
+elementTree.register_namespace('', "http://xmlns.jcp.org/xml/ns/javaee")
+elementTree.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
+elementTree.register_namespace('schemaLocation', "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd")
+errorJSP = open(catalinaHome + 'conf/error.jsp', "w+")
+errorJSP.write("<%@ page contentType=\"text/html;charset=UTF-8\" language=\"java\" %><%@ page isErrorPage=\"true\" %><!DOCTYPE html><html><head>    <title>Error Page</title></head><body><h1>An error has occurred.</h1><div style=\"color: #F00;\">    Error message: <%= exception.toString() %></div></body></html>")
+errorJSP.close()
+
+webTree = elementTree.parse(catalinaHome + '/conf/web.xml')
+webRoot = webTree.getroot()
+errorPage = elementTree.SubElement(webRoot, "error-page")
+exceptionType = elementTree.SubElement(errorPage, "exception-type")
+exceptionType.text = "java.lang.Throwable"
+location = elementTree.SubElement(errorPage, "location")
+location.text = "/error.jsp"
 
 # 2.6 Turn off TRACE (Scored)
 # Get server.xml
