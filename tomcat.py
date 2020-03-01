@@ -375,7 +375,8 @@ os.chmod(catalinaHome + "/logs", groupRemoveWriteWorldRemoveAll)
 # 8 Configure Catalina Policy
 # 8.1 Restrict runtime access to sensitive packages (Scored)
 catalinaConf = catalinaHome + '/conf/catalina.properties'
-packageLine = "package.access = sun.,org.apache.catalina.,org.apache.coyote.,org.apache.tomcat., org.apache.jasper"
+packageLine = """package.access = sun.,org.apache.catalina.,
+    org.apache.coyote.,org.apache.tomcat., org.apache.jasper"""
 logfile = open(catalinaConf)
 loglist = logfile.readlines()
 logfile.close()
