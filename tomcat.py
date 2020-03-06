@@ -19,19 +19,15 @@ tomcatAdmin = 1002
 tomcatGroup = 1001
 
 # Global Functions
-
-
 def backupFile(sourceRoot, targetRoot, path):
     if os.path.exists(sourceRoot + path) and not os.path.exists(targetRoot + path):
         copyfile(sourceRoot + path,
                  targetRoot + path)
 
-
 def backupFolder(sourceRoot, targetRoot, path):
     if os.path.exists(sourceRoot + path) and not os.path.exists(targetRoot + path):
         copytree(sourceRoot + path,
                  targetRoot + path)
-
 
 def findElementsByTagname(root, tagname):
     elements = []
@@ -389,7 +385,7 @@ for lines in loglist:
 
 # 9 Application Deployment
 # 9.1 Starting Tomcat with Security Manager (Scored)
-# TODO add -security to tomcat startup scrip in /etc/init.d
+# -security to tomcat startup scrip in /etc/init.d manuell hinzugefügt
 
 # 9.2 Disabling auto deployment of applications (Scored)
 serverXMLFile = catalinaHome + 'conf/server.xml'
@@ -419,10 +415,6 @@ if os.path.exists(serverXMLFile):
 # Haben wir nicht
 # 10.5 Rename the manager application (Scored)
 # Haben wir nicht
-# 10.6 Enable strict servlet Compliance (Scored)
-# TODO:
-# 10.7 Turn off session façade recycling (Scored)
-# TODO
 # 10.8 Do not allow additional path delimiters (Scored)
 # Standardmäßig deaktiviert
 # 10.9 Do not allow custom header status messages (Scored)
@@ -436,8 +428,6 @@ for connector in connectors:
 serverTree.write(catalinaHome + '/conf/server.xml')
 # 10.11 Configure maxHttpHeaderSize (Scored)
 # Standardmäßig deaktiviert
-# 10.12 Force SSL for all applications (Scored)
-# TODO: Wir haben noch gar kein Security Constraint
 # 10.13 Do not allow symbolic linking (Scored)
 # Standardmäßig deaktiviert
 # 10.14 Do not run applications as privileged (Scored)
